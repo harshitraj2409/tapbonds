@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: tapbonds-ai-assistant
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: MODEL_NAME
+        value: gpt-4o-mini
+      - key: OPENAI_API_KEY
+        sync: false 

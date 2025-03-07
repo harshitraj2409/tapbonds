@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+env/
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+tapbonds_env/
+
+# Environment variables
+.env
+
+# Data files - exclude large files
+data/*.csv
+data_dump/*.csv
+TapBonds_Hackathon/data/*.csv
+*.csv
+
+# IDE specific files
+.idea/
+.vscode/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Flask
+instance/
+.webassets-cache

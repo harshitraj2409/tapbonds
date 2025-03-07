@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tap Bonds AI Assistant</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        .chat-header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .chat-header h1 {
+            color: #0d6efd;
+            font-weight: 600;
+        }
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        .user-message {
+            background-color: #0d6efd;
+            color: white;
+            margin-left: auto;
+        }
+        .bot-message {
+            background-color: #e9ecef;
+            color: #333;
+        }
+        .chat-input {
+            display: flex;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px 0 0 8px;
+            outline: none;
+        }
+        .chat-input button {
+            padding: 10px 20px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #0b5ed7;
+        }
+        .agent-info {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #0d6efd;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .markdown-content th, .markdown-content td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .markdown-content th {
+            background-color: #f2f2f2;
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .new-chat-btn {
+            position: absolute;
+            right: 0;
+            top: 10px;
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        .new-chat-btn:hover {
+            background-color: #0b5ed7;
+        }
+        .new-chat-btn i {
+            margin-right: 5px;
+        }
+        .chat-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .example-queries {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .example-queries h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #0d6efd;
+        }
+        .example-queries-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .example-query {
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: #e9ecef;
+            border-radius: 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .example-query:hover {
+            background-color: #dee2e6;
+        }
+        .example-query i {
+            margin-right: 5px;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h1>Tap Bonds AI Assistant</h1>
+                <p class="text-muted">Ask me anything about bonds, companies, yields, and more!</p>
+                <button class="new-chat-btn" id="newChatBtn" title="Start a new conversation">
+                    <i class="bi bi-plus-circle"></i> New Chat
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="markdown-content">
+                        <h2>👋 Hello!</h2>
+                        <p>I'm the Tap Bonds AI Assistant. I can help you with:</p>
+                        <ul>
+                            <li><strong>Bond Details</strong> - ISIN lookups, credit ratings, maturity dates</li>
+                            <li><strong>Company Analysis</strong> - Financial metrics, sector information</li>
+                            <li><strong>Yield Calculations</strong> - Price to yield, consideration</li>
+                            <li><strong>Cash Flow Information</strong> - Payment schedules, maturity timelines</li>
+                            <li><strong>Bond Comparisons</strong> - Find the best yields across platforms</li>
+                        </ul>
+                        <p>How can I assist you today?</p>
+                    </div>
+                    <div class="agent-info">Agent: Welcome</div>
+                </div>
+            </div>
+            <div class="example-queries" id="exampleQueries">
+                <h3><i class="bi bi-lightbulb"></i> Try asking about:</h3>
+                <div class="example-queries-container">
+                    <div class="example-query"><i class="bi bi-search"></i> Show me details for ISIN INE08XP07258</div>
+                    <div class="example-query"><i class="bi bi-building"></i> What is the rating of Tata Capital?</div>
+                    <div class="example-query"><i class="bi bi-calculator"></i> Calculate the yield for a bond with price 98.5</div>
+                    <div class="example-query"><i class="bi bi-cash-stack"></i> What will be the consideration for INE08XP07258 for 20 units at 2025-03-03?</div>
+                    <div class="example-query"><i class="bi bi-bar-chart"></i> Compare the debt/equity ratio of Tata Capital and Reliance</div>
+                </div>
+            </div>
+            <div class="loading" id="loadingIndicator" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Thinking...</p>
+            </div>
+            <div class="chat-actions">
+                <button class="action-btn" id="clearBtn" title="Clear conversation">
+                    <i class="bi bi-trash"></i>
+                </button>
+                <div class="chat-input">
+                    <input type="text" id="userInput" placeholder="Type your question here..." class="form-control">
+                    <button id="sendButton" class="btn btn-primary">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+                <button class="action-btn" id="copyBtn" title="Copy conversation">
+                    <i class="bi bi-clipboard"></i>
+                </button>
+            </div>
+        </div>
+        <footer class="text-center mt-4 mb-5">
+            <p class="text-muted">
+                <small>Tap Bonds AI Assistant &copy; 2025 | <a href="https://github.com/harshitraj2409/tapbonds" target="_blank">GitHub</a></small>
+            </p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html> 

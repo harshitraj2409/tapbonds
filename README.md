@@ -29,7 +29,8 @@ The system consists of:
 
 ## Demo
 
-You can watch the live demo at: [Tap Bonds AI Assistant Demo]([https://tapbonds-ai-assistant.onrender.com](https://www.youtube.com/watch?v=s28IJWocJGk&t=275s))
+You can watch the live demo at: [Video Tutorial](https://www.youtube.com/watch?v=s28IJWocJGk&t=275s)
+
 
 ## Setup
 
